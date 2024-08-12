@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  web:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - type: volume
+        source: static_volume
+        target: /analyst/staticfiles
+      - type: volume
+        source: media_volume
+        target: /analyst/media
+    expose:
+      - 8000
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data/
+    env_file:
+      - ./.env.database
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 8000:80
+    depends_on:
+      - web
+    volumes:
+      - type: volume
+        source: static_volume
+        target: /analyst/staticfiles
+      - type: volume
+        source: media_volume
+        target: /analyst/media
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
