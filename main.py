@@ -10,7 +10,7 @@ from selenium import webdriver
 
 dr = webdriver.Chrome()
 dr.get("https://uzum.uz/")
-bs = BeautifulSoup(dr.page_source,"html.parser")
+bs = BeautifulSoup(dr.page_source, "html.parser")
 
 res = bs.find_all('a', class_="subtitle-item")
 # title = bs.select_one('div.subtitle')
